@@ -49,6 +49,6 @@ class RemoteControl:
         if keyevent.keystate in (1, 2): #state: 0=up, 1=down, 2=hold
           keycode = keyevent.keycode
           self.keydispatcher.dispatch(keycode)
-          print("scancode: ", evdev.KeyEvent(event).scancode, "keycode:", evdev.KeyEvent(event).keycode)
+          #print("scancode: ", evdev.KeyEvent(event).scancode, "keycode:", evdev.KeyEvent(event).keycode)
           #print("event:", evdev.categorize(event))
 
