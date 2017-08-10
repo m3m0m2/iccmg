@@ -1,26 +1,34 @@
 import curses                                                                
 from curses import panel                                                     
 
-import collections
-
-class InputDispatcher:
-  def __init__(self):
-    pass
-
-  def dispatch(self):
 
 class Menu(object):                                                          
 
     def __init__(self, items, stdscreen, levely, levelx):                                    
-        self.window = stdscreen.subwin(levely+1,levelx*10)                                  
+        [ rows, cols ] = self.menuSize(items)
+        self.window = stdscreen.subwin(rows + 2,cols + 5,levely,levelx)                                  
         self.window.keypad(1)                                                
         self.panel = panel.new_panel(self.window)                            
         self.panel.hide()                                                    
         panel.update_panels()                                                
 
         self.position = 0                                                    
-        self.items = items                                                   
-        self.items.append(('exit','exit'))                                   
+        self.items = items 
+        for i in range(len(self.items)):
+          item = self.items[i]
+          if type(item[1]) is list:
+            submenu = Menu(item[1], stdscreen, levely + i, levelx + 5 + cols)
+            self.items[i] = (item[0], submenu)
+       
+        #self.items.append(('exit','exit'))                                   
+
+    def menuSize(self, items):
+      maxlen=0
+      for item in items:
+        if len(item[0]) > maxlen:
+          maxlen = len(item[0])
+      return [len(items), maxlen]
+
 
     def navigate(self, n):                                                   
         self.position += n                                                   
@@ -49,10 +57,12 @@ class Menu(object):
 
             key = self.window.getch()                                        
 
-            if key in [curses.KEY_ENTER, ord('\n')]:                         
-                if self.position == len(self.items)-1:                       
+            if key == curses.KEY_LEFT:
                     break                                                    
-                else:                                                        
+            if key in [curses.KEY_ENTER, ord('\n')]:                         
+                if isinstance(self.items[self.position][1], Menu):
+                    self.items[self.position][1].display()                           
+                else:
                     self.items[self.position][1]()                           
 
             elif key == curses.KEY_UP:                                       
@@ -71,19 +81,17 @@ class MyApp(object):
     def __init__(self, stdscreen):                                           
         self.screen = stdscreen                                              
         curses.curs_set(0)                                                   
+        
+        menu_items = [
+                ('Games', [
+                           ('Tetris', curses.beep),
+                           ('Snake', curses.flash)
+                          ]),
+                ('TV', curses.beep),
+                ('Radio', curses.beep)
+                ]
 
-        submenu_items = [                                                    
-                ('beep', curses.beep),                                       
-                ('flash', curses.flash)                                      
-                ]                                                            
-        submenu = Menu(submenu_items, self.screen, 3, 1)                           
-
-        main_menu_items = [                                                  
-                ('beep', curses.beep),                                       
-                ('flash', curses.flash),                                     
-                ('submenu', submenu.display)                                 
-                ]                                                            
-        main_menu = Menu(main_menu_items, self.screen, 0, 0)                       
+        main_menu = Menu(menu_items, self.screen, 0, 0)                       
         main_menu.display()                                                  
 
 if __name__ == '__main__':                                                       
