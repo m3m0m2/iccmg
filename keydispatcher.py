@@ -1,4 +1,4 @@
-
+import keyevent
 
 class KeyDispatcher:
   def __init__(self, keymap):
@@ -14,10 +14,11 @@ class KeyDispatcher:
 
   def dispatch(self, key):
     value = self.keymap.map(key)
+    event = keyevent.KeyEvent(key, value)
     if value is not None and key in self.key_listeners:
-      self.key_listeners[key].dispatch(key, value)
+      self.key_listeners[key].dispatch(event)
       return
     for listener in self.default_listeners:
-      listener.dispatch(key, value)
+      listener.dispatch(event)
 
 

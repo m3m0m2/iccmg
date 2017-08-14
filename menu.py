@@ -1,6 +1,13 @@
 import curses                                                                
 from curses import panel                                                     
 
+class MenuSelection:
+  def __init__(self, cmd):
+    self.cmd = cmd
+
+  def getCmd(self):
+    return self.cmd
+
 
 class Menu(object):                                                          
 
@@ -41,8 +48,9 @@ class Menu(object):
         self.panel.top()                                                     
         self.panel.show()                                                    
         self.window.clear()                                                  
+        selection = None
 
-        while True:                                                          
+        while True:
             self.window.box()                                            
             self.window.refresh()                                            
             curses.doupdate()                                                
@@ -59,11 +67,16 @@ class Menu(object):
 
             if key == curses.KEY_LEFT:
                     break                                                    
-            if key in [curses.KEY_ENTER, ord('\n')]:                         
+            if key in [curses.KEY_ENTER, ord('\n'),curses.KEY_RIGHT]:                         
                 if isinstance(self.items[self.position][1], Menu):
-                    self.items[self.position][1].display()                           
+                  selection = self.items[self.position][1].display()                           
+                  break
+                elif callable(self.items[self.position][1]):
+                  self.items[self.position][1]()                           
                 else:
-                    self.items[self.position][1]()                           
+                  selection = MenuSelection(self.items[self.position][1])
+                  break
+                  #start child process
 
             elif key == curses.KEY_UP:                                       
                 self.navigate(-1)                                            
@@ -75,6 +88,7 @@ class Menu(object):
         self.panel.hide()                                                    
         panel.update_panels()                                                
         curses.doupdate()
+        return selection
 
 class MyApp(object):                                                         
 
@@ -85,6 +99,7 @@ class MyApp(object):
         menu_items = [
                 ('Games', [
                            ('Tetris', curses.beep),
+                           ('Tetris', 'bastet'),
                            ('Snake', curses.flash)
                           ]),
                 ('TV', curses.beep),

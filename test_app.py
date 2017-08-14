@@ -16,11 +16,9 @@ class FKeyDispatcher:
   def __init__(self, input):
     self.input = input
 
-  def dispatch(self, key, value):
-    self.input.pause()
-    print(self.__class__.__name__, key, value)
+  def dispatch(self, event):
+    print(self.__class__.__name__, event.getKey(), event.getValue())
     time.sleep(1)
-    self.input.unpause()
 
 
 class MainThread(threading.Thread):
@@ -37,10 +35,11 @@ class MainThread(threading.Thread):
 
   def run(self):
     while True:
-      time.sleep(0.2)
-      key = self.input.pop()
-      if key is not None:
-        print("worked input:", key)
+      time.sleep(0.1)
+      event = self.input.popWait(1)
+      #event = self.input.pop()
+      if event is not None:
+        print("worked input:", event.getKey())
       if self.isStopped():
         break
 

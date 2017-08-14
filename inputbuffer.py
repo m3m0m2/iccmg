@@ -1,62 +1,33 @@
-import collections
-import time
-import threading
+import Queue
 
 class InputBuffer:
   def __init__(self):
     self.clear()
 
   def clear(self):
-    self.buffer = collections.deque()
-    self.lock = threading.Lock()
-    self.pauser = threading.Event()
+    self.queue = Queue.Queue()
 
-  def push(self, key):
-    self.waitIfPaused()
-    self.lock.acquire()
-    self.buffer.append(key)
-    self.lock.release()
+  def push(self, event):
+    self.queue.put(event)
 
   def length(self):
-    self.waitIfPaused()
-    self.lock.acquire()
-    l=len(self.buffer)
-    self.lock.release()
-    return l
+    return self.queue.qsize()
 
   def pop(self):
-    obj = None
-    self.waitIfPaused()
-    self.lock.acquire()
-    if len(self.buffer) > 0:
-      obj = self.buffer.popleft()
-    self.lock.release()
+    obj = self.queue.get()
+    self.queue.task_done()
     return obj
 
-  def popWait(self):
-    while True:
+  def popWait(self, timeout = 1):
+    obj = None
+    try:
+      obj = self.queue.get(True, timeout)
+      self.queue.task_done()
+    except:
       obj = None
-      if not self.isPaused():
-        obj = self.pop()
-      if obj == None:
-        time.sleep(0.1)
-      else:
-        return obj
+    return obj
 
 
-  def waitIfPaused(self):
-    while self.isPaused():
-      time.sleep(0.1)
-
-  def isPaused(self):
-    return self.pauser.is_set()
-
-  def pause(self):
-    self.pauser.set()
-
-  def unpause(self):
-    self.pauser.clear()
-
-  def dispatch(self, key, value):
-    self.push(key)
+  def dispatch(self, event):
+    self.push(event)
 
