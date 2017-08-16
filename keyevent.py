@@ -10,4 +10,6 @@ class KeyEvent:
   def getValue(self):
     return self.value
 
+  def isKey(self, key):
+    return self.key == key 
 

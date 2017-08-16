@@ -4,6 +4,7 @@ import keydispatcher
 import inputbuffer 
 import signal, sys
 import time,threading
+import mainthread
 
 
 def signal_handler(signal, frame):
@@ -20,7 +21,7 @@ class FKeyDispatcher:
     print(self.__class__.__name__, event.getKey(), event.getValue())
     time.sleep(1)
 
-
+"""
 class MainThread(threading.Thread):
   def __init__(self,input):
     self.input = input
@@ -42,6 +43,7 @@ class MainThread(threading.Thread):
         print("worked input:", event.getKey())
       if self.isStopped():
         break
+"""
 
 
 def test():
@@ -59,7 +61,7 @@ def test():
 
   rc = remotecontrol.RemoteControl(_keydispatcher)
 
-  mainthread = MainThread(input)
+  mainthread = mainthread.MainThread(input)
   mainthread.start()
 
   rc.readLoop()

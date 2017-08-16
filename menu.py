@@ -1,5 +1,6 @@
 import curses                                                                
 from curses import panel                                                     
+from logger import logger
 
 class MenuSelection:
   def __init__(self, cmd):
@@ -8,10 +9,14 @@ class MenuSelection:
   def getCmd(self):
     return self.cmd
 
+  def __str__(self):
+    return str(self.getCmd())
+
 
 class Menu(object):                                                          
 
-    def __init__(self, items, stdscreen, levely, levelx):                                    
+    def __init__(self, input, items, stdscreen, levely, levelx):                                    
+        self.input = input
         [ rows, cols ] = self.menuSize(items)
         self.window = stdscreen.subwin(rows + 2,cols + 5,levely,levelx)                                  
         self.window.keypad(1)                                                
@@ -24,7 +29,7 @@ class Menu(object):
         for i in range(len(self.items)):
           item = self.items[i]
           if type(item[1]) is list:
-            submenu = Menu(item[1], stdscreen, levely + i, levelx + 5 + cols)
+            submenu = Menu(self.input, item[1], stdscreen, levely + i, levelx + 5 + cols)
             self.items[i] = (item[0], submenu)
        
         #self.items.append(('exit','exit'))                                   
@@ -52,8 +57,6 @@ class Menu(object):
 
         while True:
             self.window.box()                                            
-            self.window.refresh()                                            
-            curses.doupdate()                                                
             for index, item in enumerate(self.items):                        
                 if index == self.position:                                   
                     mode = curses.A_REVERSE                                  
@@ -62,12 +65,19 @@ class Menu(object):
 
                 msg = '%d. %s' % (index, item[0])                            
                 self.window.addstr(1+index, 1, msg, mode)                    
+            self.window.refresh()                                            
+            curses.doupdate()                                                
 
-            key = self.window.getch()                                        
+            #key = self.window.getch()                                        
+            logger.info(self.__class__.__name__ + " waiting for input")
+            key = self.input.pop()                                        
+            logger.info(self.__class__.__name__ + " input is " + key.getKey())
 
-            if key == curses.KEY_LEFT:
+            #if key == curses.KEY_LEFT:
+            if key.isKey('KEY_LEFT'):
                     break                                                    
-            if key in [curses.KEY_ENTER, ord('\n'),curses.KEY_RIGHT]:                         
+            #if key in [curses.KEY_ENTER, ord('\n'),curses.KEY_RIGHT]:                         
+            if key.isKey('KEY_ENTER') or key.isKey('KEY_RIGHT'):                         
                 if isinstance(self.items[self.position][1], Menu):
                   selection = self.items[self.position][1].display()                           
                   break
@@ -78,36 +88,17 @@ class Menu(object):
                   break
                   #start child process
 
-            elif key == curses.KEY_UP:                                       
+            #elif key == curses.KEY_UP:                                       
+            elif key.isKey('KEY_UP'): 
                 self.navigate(-1)                                            
 
-            elif key == curses.KEY_DOWN:                                     
-                self.navigate(1)                                             
+            #elif key == curses.KEY_DOWN:
+            elif key.isKey('KEY_DOWN'):
+                self.navigate(1)
 
-        self.window.clear()                                                  
-        self.panel.hide()                                                    
-        panel.update_panels()                                                
+        self.window.clear()
+        self.panel.hide()
+        panel.update_panels()
         curses.doupdate()
         return selection
 
-class MyApp(object):                                                         
-
-    def __init__(self, stdscreen):                                           
-        self.screen = stdscreen                                              
-        curses.curs_set(0)                                                   
-        
-        menu_items = [
-                ('Games', [
-                           ('Tetris', curses.beep),
-                           ('Tetris', 'bastet'),
-                           ('Snake', curses.flash)
-                          ]),
-                ('TV', curses.beep),
-                ('Radio', curses.beep)
-                ]
-
-        main_menu = Menu(menu_items, self.screen, 0, 0)                       
-        main_menu.display()                                                  
-
-if __name__ == '__main__':                                                       
-    curses.wrapper(MyApp)   
