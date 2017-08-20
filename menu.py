@@ -73,11 +73,14 @@ class Menu(object):
             key = self.input.pop()                                        
             logger.info(self.__class__.__name__ + " input is " + key.getKey())
 
-            #if key == curses.KEY_LEFT:
-            if key.isKey('KEY_LEFT'):
-                    break                                                    
-            #if key in [curses.KEY_ENTER, ord('\n'),curses.KEY_RIGHT]:                         
-            if key.isKey('KEY_ENTER') or key.isKey('KEY_RIGHT'):                         
+            if key.isKey('CMD_QUIT'):
+              selection = 'CMD_QUIT'
+              break
+
+            elif key.isKey('KEY_LEFT'):
+              break                                                    
+
+            elif key.isKey('KEY_ENTER') or key.isKey('KEY_RIGHT'):                         
                 if isinstance(self.items[self.position][1], Menu):
                   selection = self.items[self.position][1].display()                           
                   break
@@ -88,11 +91,9 @@ class Menu(object):
                   break
                   #start child process
 
-            #elif key == curses.KEY_UP:                                       
             elif key.isKey('KEY_UP'): 
                 self.navigate(-1)                                            
 
-            #elif key == curses.KEY_DOWN:
             elif key.isKey('KEY_DOWN'):
                 self.navigate(1)
 

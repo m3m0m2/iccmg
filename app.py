@@ -15,8 +15,8 @@ import keydispatcher
 def signal_handler(signal, frame):
   logger.info('You pressed Ctrl+C!')
   #print('You pressed Ctrl+C!')
-  mainthread.stop()
-  sys.exit(0)
+  _keydispatcher.dispatch('CMD_QUIT')
+  rc.close()
 
 
 
@@ -33,6 +33,8 @@ class FKeyDispatcher:
 class App:
   def __init__(self, stdscreen):
     global mainthread
+    global _keydispatcher
+    global rc
     logger.info('started')
     input = inputbuffer.InputBuffer()
     fdispatcher = FKeyDispatcher(input)
