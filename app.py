@@ -8,6 +8,7 @@ from logger import logger
 import remotecontrol
 import keymap
 import keydispatcher
+import childprocess
 
 
 
@@ -38,13 +39,15 @@ class App:
     logger.info('started')
     input = inputbuffer.InputBuffer()
     fdispatcher = FKeyDispatcher(input)
+    child = childprocess.ChildProcess()
     _keymap = keymap.KeyMap()
     _keydispatcher = keydispatcher.KeyDispatcher(_keymap)
     _keydispatcher.register_default_listener(input)
+    _keydispatcher.register_default_listener(child)
     _keydispatcher.register_key_listener('KEY_1', fdispatcher)
     _keydispatcher.register_key_listener('KEY_Q', fdispatcher)
     rc = remotecontrol.RemoteControl(_keydispatcher)
-    mainthread = mainthread.MainThread(input,stdscreen)
+    mainthread = mainthread.MainThread(input,stdscreen,child)
     mainthread.start()
 
     logger.info('rc.loop')

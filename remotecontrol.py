@@ -1,6 +1,7 @@
 import evdev
 import sys
 from configreader import CONFIG
+from logger import logger
 
 CONFIG_SECTION = 'input'
 CONFIG_DEVPATH = 'devicepath'
@@ -51,11 +52,13 @@ class RemoteControl:
   def readLoop(self):
     device = evdev.InputDevice(CONFIG.get(CONFIG_SECTION, CONFIG_DEVPATH))
     self.device = device
-    print("Opening device:", device)
+    logger.info(self.__class__.__name__ + " opening device: " + str(device))
     device.grab()
+    logger.info(self.__class__.__name__ + " opened device: " + str(device))
     try:
       for event in device.read_loop():
         if event.type == evdev.ecodes.EV_KEY:
+          logger.info(self.__class__.__name__ + " input: " + str(evdev.categorize(event)))
           keyevent = evdev.KeyEvent(event)
           if keyevent.keystate in (1, 2): #state: 0=up, 1=down, 2=hold
             keycode = keyevent.keycode
@@ -63,5 +66,6 @@ class RemoteControl:
             #print("scancode: ", evdev.KeyEvent(event).scancode, "keycode:", evdev.KeyEvent(event).keycode)
             #print("event:", evdev.categorize(event))
     except:
-      pass
+      type, value, traceback = sys.exc_info()
+      logger.info(self.__class__.__name__ + ": " + str(value) + "\n" + str(traceback))
 

@@ -12,7 +12,8 @@ logger.setLevel(logging.INFO)
 
 logger.info('Start')
 
-proc = childprocess.ChildProcess('bastet')
+proc = childprocess.ChildProcess()
+proc.start('bastet')
 
 logger.info('Ran bastet')
 
@@ -23,7 +24,7 @@ while True:
   logger.info('read ' + line)
   if not line:
     break
-  if proc.isRunning() is None:
+  if proc.isRunning():
     proc.send(line)
   else:
     break

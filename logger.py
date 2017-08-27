@@ -9,7 +9,7 @@ def setLogger(name=None, filename=None):
   if filename is None:
     filename = name + '.log'
   logger = logging.getLogger(name)
-  handler = logging.FileHandler(filename)
+  handler = logging.FileHandler(filename, 'w')
   formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
   handler.setFormatter(formatter)
   logger.addHandler(handler) 

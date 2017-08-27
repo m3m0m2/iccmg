@@ -12,16 +12,16 @@ class DispatcherA:
   def __init__(self):
     pass
 
-  def dispatch(self, key, value):
-    print(self.__class__.__name__, key, value)
+  def dispatch(self, event):
+    print(self.__class__.__name__, event.getKey(), event.getValue())
 
 
 class DispatcherB:
   def __init__(self):
     pass
 
-  def dispatch(self, key, value):
-    print(self.__class__.__name__, key, value)
+  def dispatch(self, event):
+    print(self.__class__.__name__, event.getKey(), event.getValue())
 
 
 def test1():
