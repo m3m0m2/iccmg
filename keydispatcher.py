@@ -14,8 +14,8 @@ class KeyDispatcher:
     self.default_listeners.append(listener)
 
   def dispatch(self, key):
-    logger.info(self.__class__.__name__ + " dispatching key: " + key)
     value = self.keymap.map(key)
+    logger.info(self.__class__.__name__ + " dispatching key: " + key + ", value: '" + value + "', len: " + str(len(value)))
     event = keyevent.KeyEvent(key, value)
     if value is not None and key in self.key_listeners:
       self.key_listeners[key].dispatch(event)

@@ -67,5 +67,5 @@ class RemoteControl:
             #print("event:", evdev.categorize(event))
     except:
       type, value, traceback = sys.exc_info()
-      logger.info(self.__class__.__name__ + ": " + str(value) + "\n" + str(traceback))
+      logger.info(self.__class__.__name__ + " Error: " + str(value) + "\n" + str(traceback))
 
