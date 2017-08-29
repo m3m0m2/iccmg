@@ -12,12 +12,13 @@ import childprocess
 
 
 
+def quit():
+  _keydispatcher.dispatch('CMD_QUIT')
+  rc.close()
 
 def signal_handler(signal, frame):
   logger.info('You pressed Ctrl+C!')
-  #print('You pressed Ctrl+C!')
-  _keydispatcher.dispatch('CMD_QUIT')
-  rc.close()
+  quit()
 
 
 
@@ -27,7 +28,8 @@ class FKeyDispatcher:
 
   def dispatch(self, event):
     logger.info(self.__class__.__name__ + '.dispatch(): ' + event.getKey())
-    #print(self.__class__.__name__, event.getKey(), event.getValue())
+    if event.isKey('KEY_Q'):
+      quit()
     time.sleep(1)
 
 

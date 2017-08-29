@@ -5,9 +5,19 @@ from logger import logger
 class MenuSelection:
   def __init__(self, cmd):
     self.cmd = cmd
+    self.context = []
 
   def getCmd(self):
     return self.cmd
+
+  def isCmd(self, cmd):
+    return self.cmd == cmd
+
+  def getContext(self):
+    return self.context
+
+  def pushContext(self, value):
+    self.context.insert(0, value)
 
   def __str__(self):
     return str(self.getCmd())
@@ -74,7 +84,7 @@ class Menu(object):
             logger.info(self.__class__.__name__ + " input is " + key.getKey())
 
             if key.isKey('CMD_QUIT'):
-              selection = 'CMD_QUIT'
+              selection = MenuSelection('CMD_QUIT')
               break
 
             elif key.isKey('KEY_LEFT'):
@@ -83,11 +93,13 @@ class Menu(object):
             elif key.isKey('KEY_ENTER') or key.isKey('KEY_RIGHT'):                         
                 if isinstance(self.items[self.position][1], Menu):
                   selection = self.items[self.position][1].display()                           
+                  selection.pushContext(self.items[self.position][0])
                   break
                 elif callable(self.items[self.position][1]):
                   self.items[self.position][1]()                           
                 else:
                   selection = MenuSelection(self.items[self.position][1])
+                  selection.pushContext(self.items[self.position][0])
                   break
                   #start child process
 

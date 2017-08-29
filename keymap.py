@@ -448,7 +448,7 @@ default_keymap = {
   "KEY_P": "p",
   "KEY_LEFTBRACE": "{",
   "KEY_RIGHTBRACE": "}",
-  "KEY_ENTER": "\n",
+  "KEY_ENTER": "\r\n",
   "KEY_A": "a",
   "KEY_S": "s",
   "KEY_D": "d",

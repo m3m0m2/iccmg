@@ -60,7 +60,7 @@ class RemoteControl:
         if event.type == evdev.ecodes.EV_KEY:
           logger.info(self.__class__.__name__ + " input: " + str(evdev.categorize(event)))
           keyevent = evdev.KeyEvent(event)
-          if keyevent.keystate in (1, 2): #state: 0=up, 1=down, 2=hold
+          if keyevent.keystate in (1, ): #state: 0=up, 1=down, 2=hold
             keycode = keyevent.keycode
             self.keydispatcher.dispatch(keycode)
             #print("scancode: ", evdev.KeyEvent(event).scancode, "keycode:", evdev.KeyEvent(event).keycode)
