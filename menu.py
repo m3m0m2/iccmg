@@ -93,13 +93,15 @@ class Menu(object):
             elif key.isKey('KEY_ENTER') or key.isKey('KEY_RIGHT'):                         
                 if isinstance(self.items[self.position][1], Menu):
                   selection = self.items[self.position][1].display()                           
-                  selection.pushContext(self.items[self.position][0])
+                  if selection is not None:
+                    selection.pushContext(self.items[self.position][0])
                   break
                 elif callable(self.items[self.position][1]):
                   self.items[self.position][1]()                           
                 else:
                   selection = MenuSelection(self.items[self.position][1])
-                  selection.pushContext(self.items[self.position][0])
+                  if selection is not None:
+                    selection.pushContext(self.items[self.position][0])
                   break
                   #start child process
 

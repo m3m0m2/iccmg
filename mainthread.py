@@ -4,6 +4,7 @@ import curses
 from logger import logger
 import childprocess
 import time
+from radio import Radio
 
 class MainThread(threading.Thread):
   def __init__(self,input,stdscreen,child):
@@ -13,6 +14,8 @@ class MainThread(threading.Thread):
     self.child = child
     curses.curs_set(0)
 
+  def updateMenu(self):
+    r = Radio()
     # curses.beep, curses.flash
     self.menu_items = [
       ('Games', [
@@ -20,7 +23,7 @@ class MainThread(threading.Thread):
         ('Snake', 'games/snake.py')
       ]),
       ('TV', curses.beep),
-      ('Radio', curses.beep)
+      ('Radio', r.getMenu())
     ]
 
   def stop(self):
@@ -28,13 +31,14 @@ class MainThread(threading.Thread):
 
 
   def run(self):
+    self.updateMenu()
     while True:
       logger.info(self.__class__.__name__ + " starting Menu")
       main_menu = menu.Menu(self.input, self.menu_items, self.screen, 0, 0)
       selection = main_menu.display()
-      if selection.isCmd('CMD_QUIT'):
-        break
       if selection != None: 
+        if selection.isCmd('CMD_QUIT'):
+          break
         logger.info(self.__class__.__name__ + " selected:" + str(selection) + ", context: " + str(selection.getContext()))
         if selection.getContext()[0] == 'Games':
           self.child.start(selection.getCmd())
