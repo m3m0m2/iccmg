@@ -1,4 +1,4 @@
-from subprocess import Popen, PIPE, STDOUT
+import subprocess
 import os
 from logger import logger
 
@@ -11,9 +11,15 @@ class ChildProcess:
 
   def start(self, cmd):
     self.stop()
-    self.cmd = cmd
+    if type(cmd) is list or type(cmd) is tuple:
+      self.cmd = cmd
+    else:
+      self.cmd = [cmd]
+    #TODO: if no output option
+    # FNULL = open(os.devnull, 'w')
+    #subprocess.call(['echo', 'foo'], stdout=FNULL, stderr=subprocess.STDOUT)
     logger.info(self.__class__.__name__ + " starting: " + str(self.cmd))
-    self.proc = Popen([self.cmd], stdin=PIPE, preexec_fn=os.setsid) #setsid creates new session
+    self.proc = subprocess.Popen(self.cmd, stdin=subprocess.PIPE, preexec_fn=os.setsid) #setsid creates new session
 
   def dispatch(self, event):
     if event.isKey('CMD_QUIT'):
@@ -43,5 +49,5 @@ class ChildProcess:
       self.proc.terminate()
       try:
         self.proc.wait(5)
-      except subprocess.TimeoutExpired:
+      except:
         pass

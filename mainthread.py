@@ -13,9 +13,9 @@ class MainThread(threading.Thread):
     self.screen = stdscreen
     self.child = child
     curses.curs_set(0)
+    self.radio = Radio()
 
   def updateMenu(self):
-    r = Radio()
     # curses.beep, curses.flash
     self.menu_items = [
       ('Games', [
@@ -23,7 +23,7 @@ class MainThread(threading.Thread):
         ('Snake', 'games/snake.py')
       ]),
       ('TV', curses.beep),
-      ('Radio', r.getMenu())
+      ('Radio', self.radio.getMenu())
     ]
 
   def stop(self):
@@ -44,5 +44,10 @@ class MainThread(threading.Thread):
           self.child.start(selection.getCmd())
           while self.child.isRunning():
             time.sleep(0.5)
+        if selection.getContext()[0] == 'Radio':
+          self.radio.start(selection.getCmd())
+          # Radio can run as a background process
+          #while self.radio.isRunning():
+          #  time.sleep(0.5)
       #event = self.input.popWait(1)
 

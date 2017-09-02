@@ -21,7 +21,6 @@ def signal_handler(signal, frame):
   quit()
 
 
-
 class FKeyDispatcher:
   def __init__(self, input):
     self.input = input
