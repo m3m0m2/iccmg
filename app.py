@@ -26,7 +26,7 @@ class FKeyDispatcher:
     self.input = input
 
   def dispatch(self, event):
-    logger.info(self.__class__.__name__ + '.dispatch(): ' + event.getKey())
+    logger.info(self.__class__.__name__ + '.dispatch(): ' + str(event.getKey()))
     if event.isKey('KEY_Q'):
       quit()
     time.sleep(1)

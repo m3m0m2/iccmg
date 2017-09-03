@@ -3,6 +3,7 @@ import Queue
 class InputBuffer:
   def __init__(self):
     self.clear()
+    self.active = False
 
   def clear(self):
     self.queue = Queue.Queue()
@@ -26,6 +27,12 @@ class InputBuffer:
     except:
       obj = None
     return obj
+
+  def hasActiveInput(self):
+    return self.active
+
+  def setActiveInput(self, value):
+    self.active = value
 
 
   def dispatch(self, event):

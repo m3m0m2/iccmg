@@ -21,6 +21,8 @@ class KeyDispatcher:
       self.key_listeners[key].dispatch(event)
       return
     for listener in self.default_listeners:
-      listener.dispatch(event)
+      if listener.hasActiveInput():
+        listener.dispatch(event)
+        return
 
 

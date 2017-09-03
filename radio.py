@@ -16,7 +16,7 @@ class Radio:
   def setup(self):
     while True:
       i = 1
-      options = [ 'mplayer' ]
+      options = [ 'mplayer --really-quiet' ]
       for option in options:
         print(i, option)
         i += 1
@@ -45,7 +45,9 @@ class Radio:
     return m
     
   def start(self, stream):
-    self.proc.start([self.radioapp, stream])
+    cmd = self.radioapp.split()
+    cmd.append(stream)
+    self.proc.start(cmd, hideoutput=True)
 
   def stop(self):
     self.proc.stop()

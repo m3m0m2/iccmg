@@ -27,7 +27,7 @@ class MainThread(threading.Thread):
     ]
 
   def stop(self):
-    pass
+    self.radio.stop()
 
 
   def run(self):
@@ -35,7 +35,10 @@ class MainThread(threading.Thread):
     while True:
       logger.info(self.__class__.__name__ + " starting Menu")
       main_menu = menu.Menu(self.input, self.menu_items, self.screen, 0, 0)
+      self.input.clear()
+      self.input.setActiveInput(True)
       selection = main_menu.display()
+      self.input.setActiveInput(False)
       if selection != None: 
         if selection.isCmd('CMD_QUIT'):
           break
@@ -50,4 +53,5 @@ class MainThread(threading.Thread):
           #while self.radio.isRunning():
           #  time.sleep(0.5)
       #event = self.input.popWait(1)
+    self.stop()
 
