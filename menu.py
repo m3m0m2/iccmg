@@ -46,23 +46,27 @@ class Menu(object):
 
     def menuSize(self, items):
       maxlen=0
+      curlen=0
       for item in items:
-        if len(item[0]) > maxlen:
-          maxlen = len(item[0])
+        curlen=len(item[0])
+        if len(item) > 2:
+          curlen += 4
+        if curlen > maxlen:
+          maxlen = curlen
       return [len(items), maxlen]
 
 
-    def navigate(self, n):                                                   
-        self.position += n                                                   
-        if self.position < 0:                                                
-            self.position = 0                                                
-        elif self.position >= len(self.items):                               
-            self.position = len(self.items)-1                                
+    def navigate(self, n):
+        self.position += n
+        if self.position < 0:
+            self.position = 0
+        elif self.position >= len(self.items):
+            self.position = len(self.items)-1
 
-    def display(self):                                                       
-        self.panel.top()                                                     
-        self.panel.show()                                                    
-        self.window.clear()                                                  
+    def display(self):
+        self.panel.top()
+        self.panel.show()
+        self.window.clear()
         selection = None
 
         while True:
@@ -72,15 +76,17 @@ class Menu(object):
                     mode = curses.A_REVERSE                                  
                 else:                                                        
                     mode = curses.A_NORMAL                                   
-
-                msg = '%d. %s' % (index, item[0])                            
-                self.window.addstr(1+index, 1, msg, mode)                    
+                if len(item) > 2:
+                  msg = '%d. %s [%s]' % (index, item[0], 'X' if item[2]() else ' ')
+                else:
+                  msg = '%d. %s' % (index, item[0])
+                self.window.addstr(1+index, 1, msg, mode)
             self.window.refresh()                                            
             curses.doupdate()                                                
 
             #key = self.window.getch()                                        
             logger.info(self.__class__.__name__ + " waiting for input")
-            key = self.input.pop()                                        
+            key = self.input.pop()
             logger.info(self.__class__.__name__ + " input is " + key.getKey())
 
             if key.isKey('CMD_QUIT'):
@@ -88,14 +94,14 @@ class Menu(object):
               break
 
             elif key.isKey('KEY_LEFT'):
-              break                                                    
+              break
 
-            elif key.isKey('KEY_ENTER') or key.isKey('KEY_RIGHT'):                         
+            elif key.isKey('KEY_ENTER') or key.isKey('KEY_RIGHT'):
                 if isinstance(self.items[self.position][1], Menu):
-                  selection = self.items[self.position][1].display()                           
+                  selection = self.items[self.position][1].display()
                   if selection is not None:
                     selection.pushContext(self.items[self.position][0])
-                  break
+                    break
                 elif callable(self.items[self.position][1]):
                   self.items[self.position][1]()                           
                 else:

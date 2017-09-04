@@ -5,6 +5,7 @@ from logger import logger
 import childprocess
 import time
 from radio import Radio
+from video import Video 
 
 class MainThread(threading.Thread):
   def __init__(self,input,stdscreen,child):
@@ -14,6 +15,7 @@ class MainThread(threading.Thread):
     self.child = child
     curses.curs_set(0)
     self.radio = Radio()
+    self.video = Video()
 
   def updateMenu(self):
     # curses.beep, curses.flash
@@ -23,7 +25,10 @@ class MainThread(threading.Thread):
         ('Snake', 'games/snake.py')
       ]),
       ('TV', curses.beep),
-      ('Radio', self.radio.getMenu())
+      ('Radio', self.radio.getMenu()),
+      ('Settings', [
+        ('Video', self.video.getMenu())
+      ])
     ]
 
   def stop(self):
