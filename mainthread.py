@@ -6,6 +6,7 @@ import childprocess
 import time
 from radio import Radio
 from video import Video 
+from sat import Sat
 
 class MainThread(threading.Thread):
   def __init__(self,input,stdscreen,child):
@@ -16,6 +17,7 @@ class MainThread(threading.Thread):
     curses.curs_set(0)
     self.radio = Radio()
     self.video = Video()
+    self.sat = Sat()
 
   def updateMenu(self):
     # curses.beep, curses.flash
@@ -24,8 +26,8 @@ class MainThread(threading.Thread):
         ('Tetris', 'bastet'),
         ('Snake', 'games/snake.py')
       ]),
-      ('TV', curses.beep),
       ('Radio', self.radio.getMenu()),
+      ('Sat', self.sat.getMenu()),
       ('Settings', [
         ('Video', self.video.getMenu())
       ])
@@ -44,19 +46,23 @@ class MainThread(threading.Thread):
       self.input.setActiveInput(True)
       selection = main_menu.display()
       self.input.setActiveInput(False)
-      if selection != None: 
-        if selection.isCmd('CMD_QUIT'):
-          break
-        logger.info(self.__class__.__name__ + " selected:" + str(selection) + ", context: " + str(selection.getContext()))
-        if selection.getContext()[0] == 'Games':
-          self.child.start(selection.getCmd())
-          while self.child.isRunning():
-            time.sleep(0.5)
-        if selection.getContext()[0] == 'Radio':
-          self.radio.start(selection.getCmd())
-          # Radio can run as a background process
-          #while self.radio.isRunning():
-          #  time.sleep(0.5)
+      if selection is None: 
+        continue
+
+      if selection.isCmd('CMD_QUIT'):
+        break
+      logger.info(self.__class__.__name__ + " selected:" + str(selection) + ", context: " + str(selection.getContext()))
+      if selection.getContext()[0] == 'Games':
+        self.child.start(selection.getCmd())
+        while self.child.isRunning():
+          time.sleep(0.5)
+      elif selection.getContext()[0] == 'Radio':
+        self.radio.start(selection.getCmd())
+        # Radio can run as a background process
+        #while self.radio.isRunning():
+        #  time.sleep(0.5)
+      elif selection.getContext()[0] == 'Sat':
+        self.sat.start(selection.getCmd())
       #event = self.input.popWait(1)
     self.stop()
 
