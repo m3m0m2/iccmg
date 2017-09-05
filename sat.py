@@ -3,9 +3,11 @@ from files import Files
 import childprocess
 from configreader import CONFIG
 import re
+import os
 
 CONFIG_SECTION = 'sat'
 CONFIG_PLAYER = 'player'
+CONFIG_STOPPER = 'stopper'
 
 class Sat:
   def __init__(self):
@@ -13,11 +15,12 @@ class Sat:
     if CONFIG.get( CONFIG_SECTION, CONFIG_PLAYER) is None:
       self.setup()
     self.player = CONFIG.get( CONFIG_SECTION, CONFIG_PLAYER)
+    self.stopper = CONFIG.get( CONFIG_SECTION, CONFIG_STOPPER)
 
   def setup(self):
     while True:
       i = 1
-      options = [ 'sudo openvt -f -s -c 1 -- sudo -u pi mplayer --really-quiet -vo sdl' ]
+      options = [ 'sudo openvt -f -s -c 1 -- sudo -u pi mplayer --really-quiet --hardframedrop -vo sdl' ]
       for option in options:
         print(i, option)
         i += 1
@@ -54,13 +57,13 @@ class Sat:
     return m
     
   def start(self, stream):
+    self.stop()
     cmd = self.player.split()
-    #cmd.append('"{0}"'.format(stream))
     cmd.append(stream)
     self.proc.start(cmd, hideoutput=True)
 
   def stop(self):
-    self.proc.stop()
+    os.system(self.stopper)
 
   def isRunning(self):
     #TODO: findout if this runs in the background 
