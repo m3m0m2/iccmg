@@ -2,10 +2,11 @@ import keyevent
 from logger import logger
 
 class KeyDispatcher:
-  def __init__(self, keymap):
+  def __init__(self, keymap, customkeymap):
     self.key_listeners = {}
     self.default_listeners = []
     self.keymap = keymap
+    self.customkeymap = customkeymap
 
   def register_key_listener(self, key, listener):
     self.key_listeners[key] = listener
@@ -14,6 +15,8 @@ class KeyDispatcher:
     self.default_listeners.append(listener)
 
   def dispatch(self, key):
+    if self.customkeymap is not None and key in self.customkeymap:
+      key = self.customkeymap[key]
     value = self.keymap.map(key)
     logger.info(self.__class__.__name__ + " dispatching key: " + str(key) + ", value: '" + repr(value) + "'")
     event = keyevent.KeyEvent(key, value)

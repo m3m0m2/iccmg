@@ -15,6 +15,9 @@ class DispatcherA:
   def dispatch(self, event):
     print(self.__class__.__name__, event.getKey(), event.getValue())
 
+  def hasActiveInput(self):
+    return True
+
 
 class DispatcherB:
   def __init__(self):

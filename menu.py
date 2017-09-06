@@ -25,17 +25,17 @@ class MenuSelection:
 
 class Menu(object):                                                          
 
-    def __init__(self, input, items, stdscreen, levely, levelx):                                    
+    def __init__(self, input, items, stdscreen, levely, levelx):
         self.input = input
         [ rows, cols ] = self.menuSize(items)
-        self.window = stdscreen.subwin(rows + 2,cols + 5,levely,levelx)                                  
-        self.window.keypad(1)                                                
-        self.panel = panel.new_panel(self.window)                            
-        self.panel.hide()                                                    
-        panel.update_panels()                                                
+        self.window = stdscreen.subwin(rows + 2,cols + 5,levely,levelx)
+        self.window.keypad(1)
+        self.panel = panel.new_panel(self.window)
+        self.panel.hide()
+        panel.update_panels()
 
-        self.position = 0                                                    
-        self.items = items 
+        self.position = 0
+        self.items = items
         for i in range(len(self.items)):
           item = self.items[i]
           if type(item[1]) is list:
@@ -70,21 +70,21 @@ class Menu(object):
         selection = None
 
         while True:
-            self.window.box()                                            
-            for index, item in enumerate(self.items):                        
-                if index == self.position:                                   
-                    mode = curses.A_REVERSE                                  
-                else:                                                        
-                    mode = curses.A_NORMAL                                   
+            self.window.box()
+            for index, item in enumerate(self.items):
+                if index == self.position:
+                    mode = curses.A_REVERSE
+                else:
+                    mode = curses.A_NORMAL
                 if len(item) > 2:
                   msg = '%d. %s [%s]' % (index, item[0], 'X' if item[2]() else ' ')
                 else:
                   msg = '%d. %s' % (index, item[0])
                 self.window.addstr(1+index, 1, msg, mode)
-            self.window.refresh()                                            
-            curses.doupdate()                                                
+            self.window.refresh()
+            curses.doupdate()
 
-            #key = self.window.getch()                                        
+            #key = self.window.getch()
             logger.info(self.__class__.__name__ + " waiting for input")
             key = self.input.pop()
             logger.info(self.__class__.__name__ + " input is " + key.getKey())

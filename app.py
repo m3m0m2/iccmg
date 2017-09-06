@@ -9,6 +9,7 @@ import remotecontrol
 import keymap
 import keydispatcher
 import childprocess
+import customkeymap
 
 
 
@@ -42,7 +43,8 @@ class App:
     fdispatcher = FKeyDispatcher(input)
     child = childprocess.ChildProcess()
     _keymap = keymap.KeyMap()
-    _keydispatcher = keydispatcher.KeyDispatcher(_keymap)
+    _customkeymap = customkeymap.keymap_remote
+    _keydispatcher = keydispatcher.KeyDispatcher(_keymap, _customkeymap)
     _keydispatcher.register_default_listener(input)
     _keydispatcher.register_default_listener(child)
     _keydispatcher.register_key_listener('KEY_1', fdispatcher)
