@@ -80,12 +80,26 @@ class Sat:
       item = ( name, str(i) )
       m.append( item )
     return m
+
+  def handleInput(self, input):
+    while self.isRunning():
+      keyevent = input.popWait(0.5)
+      if keyevent is None:
+        continue
+      if keyevent.isKey('KEY_CHANNELUP'):
+        self.next()
+      elif keyevent.isKey('KEY_CHANNELDOWN'):
+        self.prev()
+      elif keyevent.isKey('KEY_STOP'):
+        self.stop()
+        break
+
     
   def start(self, i):
     self.currentChannelId = int(i)
     self.stop()
-    cmd = self.player.split()
     url = self.channels[self.currentChannelId].getUrl()
+    cmd = self.player.split()
     cmd.append(url)
     self.proc.start(cmd, hideoutput=True)
 

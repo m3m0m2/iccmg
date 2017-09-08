@@ -58,25 +58,18 @@ class MainThread(threading.Thread):
           time.sleep(0.5)
       elif selection.getContext()[0] == 'Radio':
         self.radio.start(selection.getCmd())
-        # Radio can run as a background process
-        #while self.radio.isRunning():
-        #  time.sleep(0.5)
+        self.input.clear()
+        self.input.setActiveInput(True)
+        time.sleep(2)
+        self.radio.handleInput(self.input)
+        self.input.setActiveInput(False)
+        # Radio could maybe run as a background process
       elif selection.getContext()[0] == 'Sat':
         self.sat.start(selection.getCmd())
         self.input.clear()
         self.input.setActiveInput(True)
-        time.sleep(1)
-        while self.sat.isRunning():
-          keyevent = self.input.popWait(0.5)
-          if keyevent != None:
-            if keyevent.isKey('KEY_NEXT'):
-              self.sat.next()
-            elif keyevent.isKey('KEY_PREV'):
-              self.sat.prev()
-            elif keyevent.isKey('KEY_STOP'):
-              self.sat.stop()
-          #time.sleep(0.5)
+        time.sleep(3)
+        self.sat.handleInput(self.input)
         self.input.setActiveInput(False)
-      #event = self.input.popWait(1)
     self.stop()
 

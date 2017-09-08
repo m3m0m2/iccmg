@@ -12,6 +12,8 @@ class Radio:
     if CONFIG.get( CONFIG_SECTION, CONFIG_PLAYER) is None:
       self.setup()
     self.radioapp = CONFIG.get( CONFIG_SECTION, CONFIG_PLAYER)
+    self.channels = []
+    self.currentChannelId = -1
 
   def setup(self):
     while True:
@@ -34,19 +36,46 @@ class Radio:
         i += 1
       print("Invalid option number " + str(n) + ", please try again")
 
-
-  def getMenu(self):
-    m = []
+  def updateChannels(self):
+    self.channels = []
     for f in Files.ls('menu/radio', ['.url']):
       with open(f.getPath(), 'r') as file:
         stream = file.read().replace('\n', '')
-      item = ( f.getBasename(), stream )
+        item = (f.getBasename(), stream)
+      self.channels.append(item)
+
+
+  def getMenu(self):
+    self.updateChannels()
+
+    m = []
+    for i in range(len(self.channels)):
+      channel = self.channels[i]
+      name = channel[0]
+      item = ( name, str(i) )
       m.append( item )
     return m
+
+  def handleInput(self, input):
+    while self.isRunning():
+      keyevent = input.popWait(0.5)
+      if keyevent is None:
+        continue
+      if keyevent.isKey('KEY_CHANNELUP'):
+        self.next()
+      elif keyevent.isKey('KEY_CHANNELDOWN'):
+        self.prev()
+      elif keyevent.isKey('KEY_STOP'):
+        self.stop()
+        break
+
     
-  def start(self, stream):
+  def start(self, i):
+    self.currentChannelId = int(i)
+    self.stop()
+    url = self.channels[self.currentChannelId][1]
     cmd = self.radioapp.split()
-    cmd.append(stream)
+    cmd.append(url)
     self.proc.start(cmd, hideoutput=True)
 
   def stop(self):
@@ -54,3 +83,16 @@ class Radio:
 
   def isRunning(self):
     return self.proc.isRunning()
+
+  def next(self):
+    self.currentChannelId += 1
+    if self.currentChannelId >= len(self.channels):
+      self.currentChannelId = len(self.channels) - 1
+    self.start(self.currentChannelId)
+
+  def prev(self):
+    self.currentChannelId -= 1
+    if self.currentChannelId < 0:
+      self.currentChannelId = 0
+    self.start(self.currentChannelId)
+
