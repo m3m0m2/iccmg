@@ -40,6 +40,7 @@ class MainThread(threading.Thread):
   def run(self):
     self.updateMenu()
     while True:
+      ret = None
       logger.info(self.__class__.__name__ + " starting Menu")
       main_menu = menu.Menu(self.input, self.menu_items, self.screen, 0, 0)
       self.input.clear()
@@ -61,7 +62,7 @@ class MainThread(threading.Thread):
         self.input.clear()
         self.input.setActiveInput(True)
         time.sleep(2)
-        self.radio.handleInput(self.input)
+        ret = self.radio.handleInput(self.input)
         self.input.setActiveInput(False)
         # Radio could maybe run as a background process
       elif selection.getContext()[0] == 'Sat':
@@ -69,7 +70,9 @@ class MainThread(threading.Thread):
         self.input.clear()
         self.input.setActiveInput(True)
         time.sleep(3)
-        self.sat.handleInput(self.input)
+        ret = self.sat.handleInput(self.input)
         self.input.setActiveInput(False)
+      if ret == 'CMD_QUIT':
+        break
     self.stop()
 

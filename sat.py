@@ -93,6 +93,9 @@ class Sat:
       elif keyevent.isKey('KEY_STOP'):
         self.stop()
         break
+      elif keyevent.isKey('CMD_QUIT'):
+        self.stop()
+        return 'CMD_QUIT'
 
     
   def start(self, i):
