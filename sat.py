@@ -7,7 +7,6 @@ import os
 
 CONFIG_SECTION = 'sat'
 CONFIG_PLAYER = 'player'
-CONFIG_STOPPER = 'stopper'
 
 class SatChannel:
   def __init__(self, dvburl):
@@ -31,7 +30,6 @@ class Sat:
     if CONFIG.get( CONFIG_SECTION, CONFIG_PLAYER) is None:
       self.setup()
     self.player = CONFIG.get( CONFIG_SECTION, CONFIG_PLAYER)
-    self.stopper = CONFIG.get( CONFIG_SECTION, CONFIG_STOPPER)
     self.channels = []
     self.currentChannelId = -1
 
@@ -119,8 +117,8 @@ class Sat:
     self.start(self.currentChannelId)
       
   def stop(self):
-    self.proc.send('q')
-    #os.system(self.stopper)
+    if self.proc.isRunning():
+      self.proc.send('q')
 
   def isRunning(self):
     ret = os.system('pgrep mplayer >/dev/null')
