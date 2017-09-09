@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import curses
 import signal, sys
 import time
