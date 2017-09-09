@@ -119,7 +119,8 @@ class Sat:
     self.start(self.currentChannelId)
       
   def stop(self):
-    os.system(self.stopper)
+    self.proc.send('q')
+    #os.system(self.stopper)
 
   def isRunning(self):
     ret = os.system('pgrep mplayer >/dev/null')
