@@ -50,11 +50,11 @@ class ChildProcess:
     return self.proc.poll() == None
 
   def stop(self):
-    if self.isRunning():
-      #os.killpg(os.getpgid(self.proc.pid), signal.SIGTERM)
-      logger.info(self.__class__.__name__ + " stopping: " + str(self.cmd))
-      self.proc.terminate()
-      try:
-        self.proc.wait(5)
-      except:
-        pass
+    try:
+      if self.isRunning():
+        #os.killpg(os.getpgid(self.proc.pid), signal.SIGTERM)
+        logger.info(self.__class__.__name__ + " stopping: " + str(self.cmd))
+        self.proc.terminate()
+        self.proc.wait(2)
+    except:
+      pass

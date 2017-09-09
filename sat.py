@@ -98,7 +98,7 @@ class Sat:
     
   def start(self, i):
     self.currentChannelId = int(i)
-    #self.stop()
+    self.stop()
     url = self.channels[self.currentChannelId].getUrl()
     cmd = self.player.split()
     cmd.append(url)
