@@ -1,2 +1,7 @@
-copy override.conf to /etc/systemd/system/getty@tty8.service.d/override.conf
-add chvt 8 to /etc/rc.local
+1) copy override.conf to /etc/systemd/system/getty@tty8.service.d/override.conf
+
+2) add to /etc/rc.local:
+chvt 8
+setterm -blank 0
+
+
