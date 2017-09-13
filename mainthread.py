@@ -28,8 +28,9 @@ class MainThread(threading.Thread):
       ]),
       ('Radio', self.radio.getMenu()),
       ('Sat', self.sat.getMenu()),
+      ('Media', self.video.getMenu()),
       ('Settings', [
-        ('Video', self.video.getMenu())
+        ('Video', self.video.getSettingsMenu())
       ])
     ]
 
@@ -71,6 +72,13 @@ class MainThread(threading.Thread):
         self.input.setActiveInput(True)
         time.sleep(3)
         ret = self.sat.handleInput(self.input)
+        self.input.setActiveInput(False)
+      elif selection.getContext()[0] == 'Media':
+        self.video.start(selection.getCmd())
+        self.input.clear()
+        self.input.setActiveInput(True)
+        time.sleep(1)
+        ret = self.video.handleInput(self.input)
         self.input.setActiveInput(False)
       if ret == 'CMD_QUIT':
         break
