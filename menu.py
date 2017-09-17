@@ -97,6 +97,8 @@ class Menu(object):
               break
 
             elif key.isKey('KEY_ENTER') or key.isKey('KEY_RIGHT'):
+                if len(self.items) == 0:
+                  break
                 if isinstance(self.items[self.position][1], Menu):
                   selection = self.items[self.position][1].display()
                   if selection is not None:
