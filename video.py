@@ -35,16 +35,25 @@ class Video:
     self.files.append(file)
     return pos
 
+  #order: ., current dir files, subdirs
   def createDirEntries(self, subdir):
     entries = []
 
     for child in subdir.getChildren():
       if isinstance(child, File):
         pos = self.addFileEntry(subdir)
-        #item = [ '.', subdir.getPath() ]
         item = [ '.', str(pos) ]
         entries.append(item)
+        logger.info(self.__class__.__name__ + " createDirEntries %s type %s" % (str(item), type(self.files[pos])))
         break
+
+    for child in subdir.getChildren():
+      item = []
+      if isinstance(child, File):
+        pos = self.addFileEntry(child)
+        item = [ child.getBasename(), str(pos) ]
+        entries.append(item)
+        logger.info(self.__class__.__name__ + " createDirEntries %s type %s" % (str(item), type(self.files[pos])))
 
     for child in subdir.getChildren():
       item = []
@@ -53,11 +62,6 @@ class Video:
         if len(subentries) > 0:
           item = [ child.getName(), subentries ]
           entries.append(item)
-      elif isinstance(child, File):
-        pos = self.addFileEntry(child)
-        #item = [ child.getBasename(), child.getPath() ]
-        item = [ child.getBasename(), str(pos) ]
-        entries.append(item)
 
     return entries
 
@@ -93,23 +97,42 @@ class Video:
 
 
   def next(self):
+    logstatus = [ self.currentChannelId ]
+     
     self.currentChannelId += 1
-    if self.currentChannelId >= len(self.files) or self.files[self.currentChannelId].getBasename() == '.':
+    if self.currentChannelId >= len(self.files) or isinstance(self.files[self.currentChannelId], SubDir):
       self.currentChannelId -= 1
+      logger.info(self.__class__.__name__ + " next(%d -> %d) " % (logstatus[0], logstatus[0]))
       return False
+    logstatus.append( self.currentChannelId )
+    logger.info(self.__class__.__name__ + " next(%d -> %d) " % (logstatus[0], logstatus[1]))
     return True
 
   def prev(self):
+    logstatus = [ self.currentChannelId ]
+
     self.currentChannelId -= 1
-    if self.currentChannelId < 0 or self.files[self.currentChannelId].getBasename() == '.':
+    if self.currentChannelId < 0 or isinstance(self.files[self.currentChannelId], SubDir):
       self.currentChannelId += 1
+      logger.info(self.__class__.__name__ + " prev(%d -> %d) " % (logstatus[0], logstatus[0]))
       return False
+    logstatus.append( self.currentChannelId )
+    logger.info(self.__class__.__name__ + " prev(%d -> %d) " % (logstatus[0], logstatus[1]))
     return True
 
   def rewindFirst(self):
+    logstatus = [ self.currentChannelId ]
     while self.prev():
       pass
+    logstatus.append( self.currentChannelId )
+    logger.info(self.__class__.__name__ + " rewindFirst(%d -> %d) " % (logstatus[0], logstatus[1]))
 
+  def rewindLast(self):
+    logstatus = [ self.currentChannelId ]
+    while self.next():
+      pass
+    logstatus.append( self.currentChannelId )
+    logger.info(self.__class__.__name__ + " rewindLast(%d -> %d) " % (logstatus[0], logstatus[1]))
 
   def stop(self):
     if self.isRunning():
@@ -142,8 +165,14 @@ class Video:
       if keyevent.isKey('KEY_CHANNELUP'):
         if self.next():
           self.play()
+        elif self.modedir:
+          self.rewindFirst()
+          self.play()
       elif keyevent.isKey('KEY_CHANNELDOWN'):
         if self.prev():
+          self.play()
+        elif self.modedir:
+          self.rewindLast()
           self.play()
       elif keyevent.isKey('KEY_LEFT'):
         #self.proc.send(keyevent.getValue())

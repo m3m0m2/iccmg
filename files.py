@@ -2,7 +2,7 @@ import os
 import os.path
 
 
-class File:
+class File(object):
   def __init__(self, path):
     self.path = path
 
@@ -18,7 +18,7 @@ class File:
   def isExecutable(self):
     return os.access(self.path, os.X_OK)
   
-class SubDir:
+class SubDir(object):
   def __init__(self, path):
     self.path = path 
     self.children = []
@@ -38,7 +38,7 @@ class SubDir:
 
 
 
-class Files:
+class Files(object):
   @staticmethod
   def ls(dir, extensions = [], onlyExecutable = False):
     files = [File(os.path.join(dir, f)) for f in os.listdir(dir) if os.path.isfile(os.path.join(dir, f))]
