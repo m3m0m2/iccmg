@@ -8,6 +8,7 @@ class Video:
     self.mute = True
     self.proc = childprocess.ChildProcess()
     self.files = []
+    self.modedir = False
 
   def getLoop(self):
     return self.loop
@@ -68,30 +69,47 @@ class Video:
     logger.info(self.__class__.__name__ + " menu: " + str(entries))
     return entries
     
-
-  def start(self, i):
+  def play(self):
     self.stop()
     cmd = [ 'omxplayer']
     if self.mute:
       cmd.extend(['-n', '-1'])
-    self.currentChannelId = int(i)
     node=self.files[self.currentChannelId]
     if isinstance(node, File):
       path=node.getPath()
       cmd.append(path)
       self.proc.start(cmd, hideoutput=True)
+    
+
+  def start(self, i):
+    self.currentChannelId = int(i)
+    node=self.files[self.currentChannelId]
+    if isinstance(node, SubDir):
+      self.modedir = True
+      self.next()
+    else:
+      self.modedir = False
+    self.play()
+
 
   def next(self):
     self.currentChannelId += 1
     if self.currentChannelId >= len(self.files) or self.files[self.currentChannelId].getBasename() == '.':
       self.currentChannelId -= 1
-    self.start( self.currentChannelId)
+      return False
+    return True
 
   def prev(self):
     self.currentChannelId -= 1
     if self.currentChannelId < 0 or self.files[self.currentChannelId].getBasename() == '.':
       self.currentChannelId += 1
-    self.start( self.currentChannelId)
+      return False
+    return True
+
+  def rewindFirst(self):
+    while self.prev():
+      pass
+
 
   def stop(self):
     if self.isRunning():
@@ -102,20 +120,39 @@ class Video:
 
 
   def handleInput(self, input):
-    while self.isRunning():
+    while True:
+      running = self.isRunning()
+      if not running:
+        if self.modedir:
+          if self.next():
+            self.play()
+          elif self.getLoop():
+            self.rewindFirst()
+            self.play()
+          else:
+            break
+        elif self.getLoop():
+          self.play()
+        else:
+          break
+
       keyevent = input.popWait(0.5)
       if keyevent is None:
         continue
       if keyevent.isKey('KEY_CHANNELUP'):
-        self.next()
+        if self.next():
+          self.play()
       elif keyevent.isKey('KEY_CHANNELDOWN'):
-        self.prev()
+        if self.prev():
+          self.play()
       elif keyevent.isKey('KEY_LEFT'):
         #self.proc.send(keyevent.getValue())
         self.proc.send("\x1B[D")
       elif keyevent.isKey('KEY_RIGHT'):
         #self.proc.send(keyevent.getValue())
         self.proc.send("\x1B[C")
+      elif keyevent.isKey('KEY_PLAY'):
+        self.proc.send(" ")
       elif keyevent.isKey('KEY_STOP'):
         self.stop()
         break
