@@ -131,7 +131,8 @@ class MenuView:
     return pos < len(self.items)
     
   def hide(self):
-    self.window.clear()
+    #self.window.clear() #causes blink
+    self.window.erase()
     self.panel.hide()
     panel.update_panels()
     curses.doupdate()
@@ -139,7 +140,8 @@ class MenuView:
   def show(self):
     self.panel.top()
     self.panel.show()
-    self.window.clear()
+    #self.window.clear() #causes blink
+    self.window.erase()
     self.window.box()
 
     self.calcSize()
@@ -201,9 +203,6 @@ class Menu(object):
        
 
     def display(self):
-        #self.panel.top()
-        #self.panel.show()
-        #self.window.clear()
         selection = None
 
         while True:
