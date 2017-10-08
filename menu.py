@@ -1,4 +1,5 @@
 import curses                                                                
+import string
 from curses import panel                                                     
 from logger import logger
 
@@ -62,6 +63,7 @@ class MenuView:
       msg = '%d. [%s] %s' % (i + 1, 'X' if item[2]() else ' ', item[0])
     else:
       msg = '%d. %s' % (i + 1, item[0])
+    msg = filter(lambda x: x in string.printable, msg)
     if len(msg) > (self.maxWidth - self.marginx):
       msg = msg[0:self.maxWidth - 3 - self.marginx] + '...'
     if self.width > (len(msg)+1):
@@ -96,13 +98,17 @@ class MenuView:
       return True #key consumed
     elif key.isKey('KEY_DOWN'):
       if self.currentIdx < (len(self.items)-1):
-        pos = 0
-        if self.hasBottomElipses():
-          pos += 1
         self.currentIdx += 1
-        pos += self.currentIdx - self.topIdx
-        if pos >= (self.height-1):
-          self.topIdx += 1
+
+        minTop = self.currentIdx - self.height + 1
+        if self.currentIdx < (len(self.items)-1):
+          minTop += 1
+        if minTop > 0:
+          minTop += 1
+
+        if minTop > self.topIdx:
+          self.topIdx = minTop
+
       return True #key consumed
     return False
 
@@ -119,7 +125,7 @@ class MenuView:
     return self.topIdx > 0
 
   def hasBottomElipses(self):
-    pos = self.topIdx  + self.height
+    pos = self.topIdx + self.height
     if self.hasTopElipses():
       pos -= 1
     return pos < len(self.items)
@@ -160,7 +166,6 @@ class MenuView:
 
     self.window.refresh()
     curses.doupdate()
-    #return self.window.getch()
     
 
 
@@ -195,25 +200,6 @@ class Menu(object):
             self.view.items[i] = item
        
 
-    #def menuSize(self, items):
-    #  maxlen=0
-    #  curlen=0
-    #  for item in items:
-    #    curlen=len(item[0])
-    #    if len(item) > 2:
-    #      curlen += 4
-    #    if curlen > maxlen:
-    #      maxlen = curlen
-    #  return [len(items), maxlen]
-
-
-    #def navigate(self, n):
-    #    self.position += n
-    #    if self.position < 0:
-    #        self.position = 0
-    #    elif self.position >= len(self.items):
-    #        self.position = len(self.items)-1
-
     def display(self):
         #self.panel.top()
         #self.panel.show()
@@ -221,20 +207,6 @@ class Menu(object):
         selection = None
 
         while True:
-            #self.window.box()
-            #for index, item in enumerate(self.items):
-            #    if index == self.position:
-            #        mode = curses.A_REVERSE
-            #    else:
-            #        mode = curses.A_NORMAL
-            #    if len(item) > 2:
-            #      msg = '%d. %s [%s]' % (index, item[0], 'X' if item[2]() else ' ')
-            #    else:
-            #      msg = '%d. %s' % (index, item[0])
-            #    self.window.addstr(1+index, 1, msg, mode)
-            #self.window.refresh()
-            #curses.doupdate()
-
             self.view.show()
 
             #key = self.window.getch()
@@ -269,16 +241,7 @@ class Menu(object):
 
             elif self.view.parseKey(key):
               pass
-            #elif key.isKey('KEY_UP'): 
-            #    self.navigate(-1)                                            
-
-            #elif key.isKey('KEY_DOWN'):
-            #    self.navigate(1)
 
         self.view.hide()
-        #self.window.clear()
-        #self.panel.hide()
-        #panel.update_panels()
-        #curses.doupdate()
         return selection
 
