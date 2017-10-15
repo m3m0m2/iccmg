@@ -40,10 +40,11 @@ class MainThread(threading.Thread):
 
   def run(self):
     self.updateMenu()
+    logger.info(self.__class__.__name__ + " starting Menu")
+    main_menu = menu.Menu(self.input, self.menu_items, self.screen, 0, 0)
+
     while True:
       ret = None
-      logger.info(self.__class__.__name__ + " starting Menu")
-      main_menu = menu.Menu(self.input, self.menu_items, self.screen, 0, 0)
       self.input.clear()
       self.input.setActiveInput(True)
       selection = main_menu.display()

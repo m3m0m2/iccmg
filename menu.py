@@ -95,6 +95,8 @@ class MenuView:
         self.currentIdx -= 1
         if self.topIdx > self.currentIdx:
           self.topIdx = self.currentIdx
+        if self.topIdx == 1:
+          self.topIdx = 0
       return True #key consumed
     elif key.isKey('KEY_DOWN'):
       if self.currentIdx < (len(self.items)-1):
@@ -105,12 +107,14 @@ class MenuView:
           minTop += 1
         if minTop > 0:
           minTop += 1
-
         if minTop > self.topIdx:
           self.topIdx = minTop
+        if self.topIdx == 1:
+          self.topIdx = 0
 
       return True #key consumed
     return False
+
 
   def createWindow(self,stdscreen):
     self.stdscreen = stdscreen
@@ -144,7 +148,7 @@ class MenuView:
     self.window.erase()
     self.window.box()
 
-    self.calcSize()
+    #self.calcSize()
     i = 0
     curIdx = self.topIdx
     mode = curses.A_NORMAL
@@ -177,17 +181,9 @@ class Menu(object):
 
     def __init__(self, input, items, stdscreen, y, x):
         self.input = input
-        #[ rows, cols ] = self.menuSize(items)
-        #self.window = stdscreen.subwin(rows + 2,cols + 5,levely,levelx)
-        #self.window.keypad(1)
-        #self.panel = panel.new_panel(self.window)
-        #self.panel.hide()
-        #panel.update_panels()
         [maxy, maxx] = stdscreen.getmaxyx()
         self.view = MenuView(y,x,maxy-2,maxx-2)
 
-        #self.position = 0
-        #self.items = items
         for i in range(len(items)):
           item = items[i]
           self.view.addItem(item)
