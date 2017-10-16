@@ -22,8 +22,8 @@ class MainThread(threading.Thread):
 
   def resetScreen(self):
     time.sleep(0.5)
-    self.screen.clear()
     curses.curs_set(0)
+    self.screen.clear()
     self.screen.refresh()
 
   def updateMenu(self):

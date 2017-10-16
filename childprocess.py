@@ -29,7 +29,10 @@ class ChildProcess:
     if event.isKey('CMD_QUIT'):
       self.stop()
     else:
-      self.send(event.getValue())
+      if event.getValue() != None:
+        self.send(event.getValue())
+      else:
+        self.send(event.getKey())
 
   def hasActiveInput(self):
     return self.isRunning()
