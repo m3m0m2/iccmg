@@ -18,6 +18,8 @@ class KeyDispatcher:
     if self.customkeymap is not None and key in self.customkeymap:
       key = self.customkeymap[key]
     value = self.keymap.map(key)
+    if value == None:
+      value = key
     logger.info(self.__class__.__name__ + " dispatching key: " + str(key) + ", value: '" + repr(value) + "'")
     event = keyevent.KeyEvent(key, value)
     if value is not None and key in self.key_listeners:

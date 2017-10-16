@@ -15,6 +15,7 @@ import customkeymap
 
 
 def quit():
+  child.stop()
   _keydispatcher.dispatch('CMD_QUIT')
   rc.close()
 
@@ -39,6 +40,7 @@ class App:
     global mainthread
     global _keydispatcher
     global rc
+    global child
     logger.info('started')
     input = inputbuffer.InputBuffer()
     fdispatcher = FKeyDispatcher(input)

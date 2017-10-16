@@ -7,6 +7,7 @@ import time
 from radio import Radio
 from video import Video 
 from sat import Sat
+from game import Game
 
 class MainThread(threading.Thread):
   def __init__(self,input,stdscreen,child):
@@ -18,14 +19,17 @@ class MainThread(threading.Thread):
     self.radio = Radio()
     self.video = Video()
     self.sat = Sat()
+    self.game = Game()
+
+  def resetScreen(self):
+    time.sleep(0.5)
+    self.screen.clear()
+    self.screen.refresh()
 
   def updateMenu(self):
     # curses.beep, curses.flash
     self.menu_items = [
-      ('Games', [
-        ('Tetris', 'bastet'),
-        ('Snake', 'games/snake.py')
-      ]),
+      ('Games', self.game.getMenu()),
       ('Radio', self.radio.getMenu()),
       ('Sat', self.sat.getMenu()),
       ('Media', self.video.getMenu()),
@@ -56,9 +60,13 @@ class MainThread(threading.Thread):
         break
       logger.info(self.__class__.__name__ + " selected:" + str(selection) + ", context: " + str(selection.getContext()))
       if selection.getContext()[0] == 'Games':
+        #self.game.start(selection.getCmd())
+        #while self.game.isRunning():
+        #  time.sleep(0.5)
         self.child.start(selection.getCmd())
         while self.child.isRunning():
           time.sleep(0.5)
+        self.resetScreen()
       elif selection.getContext()[0] == 'Radio':
         self.radio.start(selection.getCmd())
         self.input.clear()

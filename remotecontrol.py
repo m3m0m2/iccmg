@@ -58,6 +58,8 @@ class RemoteControl:
     try:
       for event in device.read_loop():
         if event.type == evdev.ecodes.EV_KEY:
+          if evdev.categorize(event) == None:
+            continue
           logger.info(self.__class__.__name__ + " input: " + str(evdev.categorize(event)))
           keyevent = evdev.KeyEvent(event)
           if keyevent.keystate in (1, ): #state: 0=up, 1=down, 2=hold
