@@ -15,7 +15,6 @@ import customkeymap
 
 
 def quit():
-  child.stop()
   _keydispatcher.dispatch('CMD_QUIT')
   rc.close()
 

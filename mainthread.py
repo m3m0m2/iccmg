@@ -15,7 +15,6 @@ class MainThread(threading.Thread):
     self.input = input
     self.screen = stdscreen
     self.child = child
-    curses.curs_set(0)
     self.radio = Radio()
     self.video = Video()
     self.sat = Sat()
@@ -24,6 +23,7 @@ class MainThread(threading.Thread):
   def resetScreen(self):
     time.sleep(0.5)
     self.screen.clear()
+    curses.curs_set(0)
     self.screen.refresh()
 
   def updateMenu(self):
@@ -40,12 +40,16 @@ class MainThread(threading.Thread):
 
   def stop(self):
     self.radio.stop()
-
+    self.child.stop()
+    self.sat.stop()
+    self.game.stop()
+    self.video.stop()
 
   def run(self):
     self.updateMenu()
     logger.info(self.__class__.__name__ + " starting Menu")
     main_menu = menu.Menu(self.input, self.menu_items, self.screen, 0, 0)
+    self.resetScreen()
 
     while True:
       ret = None
