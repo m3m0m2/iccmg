@@ -473,14 +473,14 @@ default_keymap = {
   "KEY_SLASH": "/",
   "KEY_SPACE": " ",
   "KEY_LINEFEED": "\r",
-  "KEY_UP": "\x1BOA",
-  "KEY_DOWN": "\x1BOB",
-  "KEY_RIGHT": "\x1BOC",
-  "KEY_LEFT": "\x1BOD"
-  #"KEY_UP": "\x1BkA",
-  #"KEY_DOWN": "\x1B[B",
-  #"KEY_RIGHT": "\x1B[C",
-  #"KEY_LEFT": "\x1B[D"
+  #"KEY_UP": "\x1BOA",
+  #"KEY_DOWN": "\x1BOB",
+  #"KEY_RIGHT": "\x1BOC",
+  #"KEY_LEFT": "\x1BOD"
+  "KEY_UP": "\x1B[A",
+  "KEY_DOWN": "\x1B[B",
+  "KEY_RIGHT": "\x1B[C",
+  "KEY_LEFT": "\x1B[D"
   #"KEY_HOME": "HOME",
   #"KEY_PAGEUP": "PAGEUP",
   #"KEY_END": "END",

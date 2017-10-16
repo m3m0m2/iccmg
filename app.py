@@ -39,7 +39,6 @@ class App:
     global mainthread
     global _keydispatcher
     global rc
-    global child
     logger.info('started')
     input = inputbuffer.InputBuffer()
     fdispatcher = FKeyDispatcher(input)

@@ -47,9 +47,9 @@ class MainThread(threading.Thread):
 
   def run(self):
     self.updateMenu()
+    self.resetScreen()
     logger.info(self.__class__.__name__ + " starting Menu")
     main_menu = menu.Menu(self.input, self.menu_items, self.screen, 0, 0)
-    self.resetScreen()
 
     while True:
       ret = None
