@@ -10,21 +10,22 @@ I'm using this project running on my raspberry pi connected to my living room te
 
 This project cannot be simply run blindfolded because requires some custom setup that currently need to be done manually, but I may add a proper installation menu in the future.
 
-Custom setup on my system
-Hardware
+## Custom setup on my system
+### Hardware
 - using flirc for remote control, using custom key map (that depends on remote device)
 - using HD Star v3 satellite decoder http://www.ebay.co.uk/itm/HDStar-DVB-S2-TV-Box-USB-Satellite-Receiver-for-Windows-Linux-FREESAT-HOTBIRD-/322382413057
 - foot switch
 - custom wooden mount
 
-Software
+### Software
 - depends on media kernel modules from crasycat to detect the HD Star decoder https://bitbucket.org/CrazyCat/media_build
 - requires device firmware file
 - using mplayer, omxplayer, fbi as external tools
 - using python modules as evdev
+- requires updating config some files
 
-What does this project currently do:
+### What does this project currently do:
 - play some simple games like tetris and 2048 using the remote control
 - listen to radio channels by IP streaming
 - watch satellite channels
-- watch videos on local drives, automatic loop through
+- watch videos and music files on local drives, automatic loop through
